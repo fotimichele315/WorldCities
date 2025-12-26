@@ -1,0 +1,28 @@
+# Visual Studio / .NET
+bin/
+obj/
+*.user
+*.suo
+*.vs
+*.vscode
+*.db
+
+# ASP.NET Core secrets / config
+appsettings.Development.json
+*.pfx
+*.key
+*.pem
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+npm-debug.log
+yarn-error.log
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
