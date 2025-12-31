@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace WorldCities.Server.Data.Models
 {
@@ -23,15 +24,17 @@ namespace WorldCities.Server.Data.Models
         /// Country name (in UTF8 format)
         ///</Summary>  
         public required string Name { get; set; }
-    
+
         ///<Summary>
         /// Country Code (in ISO 3166-1 ALPHA-2 format)
         ///</Summary>     
+        [JsonPropertyName("iso2")]
         public required string ISO2 { get; set; }
 
         ///<Summary>
         /// Country Code (in ISO 3166-1 ALPHA-3 format)
         ///</Summary>     
+        [JsonPropertyName("iso3")]
         public required string ISO3 { get; set; }
 
         #endregion

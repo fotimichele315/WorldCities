@@ -7,8 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.WriteIndented = true;
-    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    //options.JsonSerializerOptions.WriteIndented = true;
+    //options.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
