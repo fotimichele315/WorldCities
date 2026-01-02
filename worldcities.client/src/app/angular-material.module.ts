@@ -7,13 +7,14 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 
  
 @NgModule({
   imports: [
-    MatButtonModule, MatIconModule, MatToolbarModule, MatTableModule, CommonModule, MatPaginatorModule, MatSortModule, MatInputModule
+    MatButtonModule, MatIconModule, MatToolbarModule, MatTableModule, CommonModule, MatPaginatorModule, MatSortModule, MatInputModule, MatSelectModule
   ],
-  exports: [MatButtonModule, MatIconModule, MatToolbarModule, MatTableModule, CommonModule, MatPaginatorModule, MatSortModule, MatInputModule]
+  exports: [MatButtonModule, MatIconModule, MatToolbarModule, MatTableModule, CommonModule, MatPaginatorModule, MatSortModule, MatInputModule, MatSelectModule]
 })
 export class AngularMaterialModule { }
