@@ -6,4 +6,5 @@ export interface City {
   lon: number,
   population: number,
   countryId: number;
+  countryName: string;
 }
