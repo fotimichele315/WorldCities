@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 // import { HttpClient, HttpParams } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormControl, Validators, AbstractControl, AsyncValidatorFn } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 // import { environment } from './../../environments/environment';
 import { City } from './city';
@@ -34,6 +34,13 @@ export class CityEditComponent
   // the countries array for the select
   countries?: Country[];
 
+  // Activity log (for debugging purposes)
+  //activityLog: string = '';
+
+  //private subscriptions: Subscription = new Subscription();
+  private destroySubject = new Subject();
+
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -57,8 +64,37 @@ export class CityEditComponent
       countryId: new FormControl('', Validators.required)
     }, null, this.isDupeCity());
 
+    // react to form changes
+   // this.subscriptions.add(this.form.valueChanges.subscribe(() => {
+    this.form.valueChanges.pipe(takeUntil(this.destroySubject)).subscribe(() => {
+
+      if (!this.form.dirty) {
+        this.log("Form model has benn loaded")
+      } else {
+        this.log("Form model was updated by the user")
+      }
+    })
+    //)
+    // react to changes in the form.name control
+   // this.subscriptions.add(this.form.get("name")!.valueChanges.subscribe(() => {
+    this.form.get("name")!.valueChanges.pipe(takeUntil(this.destroySubject)).subscribe(() => {
+      if (!this.form.dirty) {
+        this.log("Name ha been loaded with initial values");
+      } else {
+        this.log("Name was updated by the user")
+      }
+    })
+    //)
     this.loadData();
   }
+
+  log(str: string) {
+    //this.activityLog += "["
+    console.log("["
+      + new Date().toLocaleString()
+      + "] " + str + "<br />");
+  }
+
 
   loadData() {
 
@@ -164,4 +200,15 @@ export class CityEditComponent
         }));
     }
   }
+
+  ngOnDestroy() {
+    //this.subscriptions.unsubscribe();
+
+    //emit a value with the takeUntil notifier
+    this.destroySubject.next(true);
+    //complete the subject
+    this.destroySubject.complete();
+
+  }
+
 }

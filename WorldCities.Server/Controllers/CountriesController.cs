@@ -24,7 +24,7 @@ namespace WorldCities.Server.Controllers
 
         // GET: api/Countries
         [HttpGet]
-        public async Task<ActionResult<ApiResult<CountryDTO>>> GetCountries(int pageIndex = 0, int pageSize = 10, string? sortColumn = null, string? sortOrder = null, string? filterColumn = null, string? filterQuery = null)
+        public async Task<ActionResult<ApiResult<CountryDTO>>> GetCountries(int pageIndex = 0, int pageSize = 10, string? sortColumn = null, string? sortOrder = null, string? filterColumn = null, string? filterQuery = null, ApplicationDbContext applicationDbContext = null)
         {
             return await ApiResult<CountryDTO>.CreateAsync(_context.Countries.AsNoTracking().Select(
                 c=> new CountryDTO()
@@ -36,7 +36,7 @@ namespace WorldCities.Server.Controllers
                     TotCities = c.Cities!.Count
                     
                 }
-                ), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
+                ), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery, _context);
         }
 
 

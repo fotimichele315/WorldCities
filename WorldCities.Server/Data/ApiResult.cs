@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using EFCore.BulkExtensions;
 using System.Linq.Dynamic.Core;
 using System.Reflection;
 
@@ -50,7 +51,7 @@ namespace WorldCities.Server.Data
         /// <param name="filterColumn">The filtering column name</param>
         /// <param name="filterQuery">The filtering query (value to Lookup)</param>
         /// <returns>A object containing the paged/sorted/filtered result and all the relevant paging/sorting/filtering navigation info</returns>
-        public static async Task<ApiResult<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize, string? sortColumn = null, string? sortOrder = null, string? filterColumn= null, string? filterQuery= null)
+        public static async Task<ApiResult<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize, string? sortColumn = null, string? sortOrder = null, string? filterColumn= null, string? filterQuery= null, ApplicationDbContext applicationDbContext = null)
         {
             if(!string.IsNullOrEmpty(filterColumn) && !string.IsNullOrEmpty(filterQuery) && IsValidProperty(filterColumn))
             {
@@ -70,7 +71,10 @@ namespace WorldCities.Server.Data
 
 
             source = source.Skip(pageIndex*pageSize).Take(pageSize);
-
+ #if DEBUG
+            //retrive the SQl query (for debug prposes)
+            var sql = source.ToParametrizedSql(applicationDbContext);
+           #endif
             var data = await source.ToListAsync();
 
             return new ApiResult<T>(data, count, pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);

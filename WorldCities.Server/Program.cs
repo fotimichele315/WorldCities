@@ -1,8 +1,25 @@
 using Microsoft.EntityFrameworkCore;
 using WorldCities.Server.Data;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.MSSqlServer;
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Serilog support
+builder.Host.UseSerilog(
+    (ctx,lc) =>lc
+    .ReadFrom.Configuration(ctx.Configuration)
+    .WriteTo.MSSqlServer(connectionString:
+    "Server=tcp:worldcities2.database.windows.net,1433;Initial Catalog=worldcities;Persist Security Info=False;User ID=worldcities;Password=Malpselamps1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;", 
+    restrictedToMinimumLevel: LogEventLevel.Information,
+    sinkOptions: new MSSqlServerSinkOptions
+    { TableName = "LogEvents",
+    AutoCreateSqlTable = true}).WriteTo.Console()
+    );
 // Add services to the container.
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -18,6 +35,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
 app.UseDefaultFiles();
 app.MapStaticAssets();
 

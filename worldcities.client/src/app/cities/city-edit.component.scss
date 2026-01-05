@@ -9,3 +9,37 @@ mat-error {
     text-align:left;
     position:relative; bottom: 20px;
 }
+
+
+.info {
+margin-top:20px;
+background-color:#efefef;
+border-bottom: 1px solid #cdcdcd;
+border-radius:  10px;
+}
+
+.info-header {
+  font-weight: 500;
+  padding: 10px 20px;
+  border-bottom: 1px solid #cdcdcd;
+}
+
+.info-body {
+  padding: 10px 20px;
+  background-color: #fafafa;
+  border-radius: 0 0 10px 10px;
+}
+
+.info-label { }
+
+.info-header {
+  font-size: 0.8em;
+  padding: 2px 0;
+  border-bottom: 1px solid #cdcdcd;
+}
+
+hr {
+    border: 0;
+  border-top: 1px solid #cdcdcd;
+ 
+}

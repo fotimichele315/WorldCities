@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WorldCities.Server.Data;
 using WorldCities.Server.Data.Models;
+using Microsoft.Extensions.Logging;
 
 namespace WorldCities.Server.Controllers
 {
@@ -16,10 +17,12 @@ namespace WorldCities.Server.Controllers
     public class CitiesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        public ILogger<CitiesController> Logger { get; set;}
 
-        public CitiesController(ApplicationDbContext context)
+        public CitiesController(ApplicationDbContext context, ILogger<CitiesController> logger)
         {
             _context = context;
+            Logger = logger;
         }
 
         // GET: api/Cities
@@ -27,7 +30,10 @@ namespace WorldCities.Server.Controllers
         // GET: api/Cities/?pageIndex=1&pageSize=25&sortColumn=Name&sortOrder=ASC
         [HttpGet]
         public async Task<ActionResult<ApiResult<CityDTO>>> GetCities(int pageIndex = 0, int pageSize = 10, string? sortColumn = null, string? sortOrder = null, string? filterColumn = null, string? filterQuery= null)
-        {        
+        {
+              Logger.LogInformation("Get cities start query");
+
+
             return await ApiResult<CityDTO>.CreateAsync(_context.Cities.AsNoTracking().Select(
                 c => new CityDTO()
                 {
@@ -40,7 +46,7 @@ namespace WorldCities.Server.Controllers
                     CountryName = c.Country!.Name
 
                 }
-                ), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
+                ), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery, _context);
         }
 
         // GET: api/Cities/5
