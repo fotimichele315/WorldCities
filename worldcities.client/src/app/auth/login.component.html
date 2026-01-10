@@ -1,0 +1,44 @@
+
+
+
+<div class="login">
+  <h1>Login</h1>
+  <p>
+    This application is a demo for learning purposes. Feel free to access additional features using the following credentials: user&#64;email.com - Sampl3Pa$$_User
+  </p>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <p>
+      <mat-error *ngIf="loginResult && !loginResult.success">
+        <strong>ERROR</strong>: {{loginResult.message}}
+      </mat-error>
+    </p>
+
+    <!-- Email -->
+    <mat-form-field>
+      <mat-label>Email:</mat-label>
+      <input matInput formControlName ="email" required placeholder="Insert email" />
+      <mat-error *ngFor="let error of getErrors(form.get('email')!, 'Email')">{{error}}</mat-error>
+    </mat-form-field>
+
+    <!-- Password -->
+    <mat-form-field>
+      <mat-label>Password:</mat-label>
+      <input matInput type="password" formControlName ="password" required placeholder="Insert password" />
+      <mat-error *ngFor="let error of getErrors(form.get('password')!, 'password')">{{error}}</mat-error>
+    </mat-form-field>
+
+    <div>
+      <button mat-flat-button color="primary" type="submit">
+        Login
+      </button>
+      <button mat-flat-button color="secondary"  [routerLink]="['/']">
+        Cancel
+      </button>
+    </div>
+
+
+
+  </form>
+
+</div>

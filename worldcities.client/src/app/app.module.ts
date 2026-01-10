@@ -1,5 +1,5 @@
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +15,12 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { CountriesComponent } from './countries/countries.component';
 import { CityEditComponent } from './cities/city-edit.component';
  import { CountryEditComponent } from './countries/country-edit.component';
- 
+import { LoginComponent } from './auth/login.component';
+import { AuthInterceptor } from './auth/auth.interceptor';
+import { ServiceWorkerModule } from '@angular/service-worker';
+
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,16 +29,26 @@ import { CityEditComponent } from './cities/city-edit.component';
     CitiesComponent,
     CountriesComponent,
     CityEditComponent,
-     CountryEditComponent
+     CountryEditComponent,
+     LoginComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule, // ⭐ Aggiunto
     HttpClientModule,
     AppRoutingModule,
-    AngularMaterialModule, RouterModule, AngularMaterialModule, ReactiveFormsModule, MatSelectModule // OK ✔️
+    AngularMaterialModule, RouterModule, AngularMaterialModule, ReactiveFormsModule, MatSelectModule, ServiceWorkerModule.register('ngsw-worker.js', {
+  enabled: !isDevMode(),
+  // Register the ServiceWorker as soon as the application is stable
+  // or after 30 seconds (whichever comes first).
+  registrationStrategy: 'registerWhenStable:30000'
+}) // OK ✔️
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
