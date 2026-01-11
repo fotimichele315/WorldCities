@@ -1,27 +1,36 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using WorldCities.Server.Data;
-using WorldCities.Server.Data.Models;
-using System.Security;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using System.Runtime;
+using System.Security;
+using System.Security.Principal;
+using WorldCities.Server.Data;
+using WorldCities.Server.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace WorldCities.Server.Controllers
 {
-
+    [Authorize(Roles = "Admimistrator")]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class SeedController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _env;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public SeedController(ApplicationDbContext context, IWebHostEnvironment env)
+        public SeedController(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, IWebHostEnvironment env, IConfiguration configuration)
         {
             _context = context;
             _env = env;
+            _roleManager = roleManager;
+            _userManager = userManager;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -163,5 +172,90 @@ var d = "";
             });
         }
 
-    }
+        [HttpGet]
+        public async Task<ActionResult> CreateDefaultUser()
+        {
+            // Setup the default role names
+            string role_RegisteredUser = "RegisteredUser";
+            string role_Administrator = "Administrator";
+
+            // create the default roles (if they don't exist yet)
+            if(await _roleManager.FindByNameAsync(role_RegisteredUser) == null) 
+                await _roleManager.CreateAsync(new IdentityRole(role_RegisteredUser));
+
+            if(await _roleManager.FindByNameAsync(role_Administrator) == null) 
+                await _roleManager.CreateAsync(new IdentityRole(role_Administrator));
+
+            // create a list to track  the newly added users
+            var addedUserList = new List<ApplicationUser>();
+
+            // check if the admin user already exists
+            var email_Admin = "admin@email.com";
+
+            if(await _userManager.FindByNameAsync(email_Admin) == null)
+            {
+                // create a new admin ApplicationUser Account
+                var user_admin = new ApplicationUser()
+                {
+                    Email = email_Admin,
+                    UserName = email_Admin
+                };
+
+
+             
+var config = _configuration["DefaultPassword:Administrator"]!;
+                // insert the admin user into the db
+                await _userManager.CreateAsync(user_admin, config);
+
+                //assign the "RegisteredUser" and "Administrator" roles
+                await _userManager.AddToRoleAsync(user_admin, role_RegisteredUser); 
+                await _userManager.AddToRoleAsync(user_admin, role_Administrator);
+
+                //confirm the the email and remove Lockout
+                user_admin.EmailConfirmed = true;
+                user_admin.LockoutEnabled = false;
+
+                //add the user the added user list
+                addedUserList.Add(user_admin);
+            }
+
+            //check if the standard user already exists
+            // check if the admin user already exists
+            var email_User = "user@email.com";
+
+            if (await _userManager.FindByNameAsync(email_User) == null)
+            {
+                // create a new standard ApplicationUser Account
+                var user_User = new ApplicationUser()
+                {
+                    Email = email_User,
+                    UserName = email_User
+                };
+var config = _configuration["DefaultPassword:RegisteredUser"]!;
+                // insert the admin user into the db
+                await _userManager.CreateAsync(user_User, config);
+
+                //assign the "RegisteredUser" roles
+                await _userManager.AddToRoleAsync(user_User, role_RegisteredUser);
+
+                //confirm the the email and remove Lockout
+                user_User.EmailConfirmed = true;
+                user_User.LockoutEnabled = false;
+
+                //add the user the added user list
+                addedUserList.Add(user_User);
+            }
+
+
+            // if we added at least one user, persist the changes into the db
+            if(addedUserList.Count>0)
+                await _context.SaveChangesAsync();
+
+            return new JsonResult(new
+                {
+                    Count= addedUserList.Count,
+                    Users= addedUserList
+                });
+        }
+        }
 }
