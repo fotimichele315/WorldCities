@@ -7,7 +7,7 @@ using Serilog.Sinks.MSSqlServer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-
+using WorldCities.Server.Data.GraphQL;
 
 
 
@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add Serilog support
 builder.Host.UseSerilog(
-    (ctx,lc) =>lc
+    (ctx,lc) => lc
     .ReadFrom.Configuration(ctx.Configuration)
     .WriteTo.MSSqlServer(connectionString:
     "Server=tcp:worldcities2.database.windows.net,1433;Initial Catalog=worldcities;Persist Security Info=False;User ID=worldcities;Password=Malpselamps1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;", 
@@ -51,6 +51,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 
 builder.Services.AddScoped<JwtHandler>();
+
+builder.Services.AddGraphQLServer().AddAuthorization().AddQueryType<Query>().AddMutationType<Mutation>().AddFiltering().AddSorting();
+
 
 // Add authentication  services & middleware
 builder.Services.AddAuthentication(opt => { 
@@ -96,6 +99,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGraphQL("/api/graphql");
 
 app.MapFallbackToFile("/index.html");
 

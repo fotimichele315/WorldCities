@@ -40,7 +40,7 @@ namespace WorldCities.Server.Controllers
             if (!_env.IsDevelopment())
                 throw new SecurityException("Not Allowed");
 
-            var path = Path.Combine(_env.ContentRootPath, "Data/Source/worldcities.xlsx");
+            var path = System.IO.Path.Combine(_env.ContentRootPath, "Data/Source/worldcities.xlsx");
 
             using var stream = System.IO.File.OpenRead(path);
             using var excelpackage = new ExcelPackage(stream);
