@@ -18,6 +18,7 @@ import { CityEditComponent } from './cities/city-edit.component';
 import { LoginComponent } from './auth/login.component';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { GraphQLModule } from './graphql.module';
 
 
 
@@ -42,7 +43,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
   // Register the ServiceWorker as soon as the application is stable
   // or after 30 seconds (whichever comes first).
   registrationStrategy: 'registerWhenStable:30000'
-}) // OK ✔️
+}), GraphQLModule // OK ✔️
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

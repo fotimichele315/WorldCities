@@ -35,7 +35,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddOpenApi();
 
 //Add Application DBContext and SQL Serve support
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer("Server=tcp:worldcities2.database.windows.net,1433;Initial Catalog=worldcities;Persist Security Info=False;User ID=worldcities;Password=Malpselamps1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"));
+
+var connection = builder.Configuration["ConnectionStrings:DefaultConnection"];
+ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
 
 //Add Asp.NET Core Identity support 
 
@@ -91,9 +93,15 @@ app.MapStaticAssets();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+} else
+{
+    app.UseExceptionHandler("/Error");
+    app.MapGet("/Error", () => Results.Problem());
+    app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+
+    app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

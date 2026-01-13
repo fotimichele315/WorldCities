@@ -45,4 +45,6 @@
     <Folder Include="Data\Source\" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1production_1json__JsonSchema="https://www.schemastore.org/winget-pkgs-locale-1.0.0.json" /></VisualStudio></ProjectExtensions>
+
 </Project>
