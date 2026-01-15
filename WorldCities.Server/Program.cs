@@ -12,7 +12,16 @@ using WorldCities.Server.Data.GraphQL;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("https://worldcities-2026.michelefoti.net")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 // Add Serilog support
 builder.Host.UseSerilog(
     (ctx,lc) => lc
@@ -99,9 +108,10 @@ if (app.Environment.IsDevelopment())
     app.MapGet("/Error", () => Results.Problem());
     app.UseHsts();
 }
+// 3. Applica la policy
+app.UseCors("AllowFrontend");
 
-
-    app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

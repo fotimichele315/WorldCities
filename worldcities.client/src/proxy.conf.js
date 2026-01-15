@@ -8,7 +8,7 @@ const PROXY_CONFIG = [
     context: [
       "/api",
     ],
-    target: "https://localhost:40443",
+    target: "https://worldcities-api-2026.michelefoti.net/",
     changeOrigin: true,
     secure: false
   }

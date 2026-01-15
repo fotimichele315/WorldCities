@@ -8,7 +8,7 @@ import { City } from './city';
 import { Country } from './../countries/country';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root' // ← questo fa sì che Angular registri il servizio automaticamente
 })
 export class CityService
   extends BaseService<City> {
